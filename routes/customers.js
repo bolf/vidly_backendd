@@ -13,6 +13,15 @@ router.get("/", async (reg, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  try {
+    const genre = await persistence.getCustomerById(req.params.id);
+    res.send(genre);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
 router.post("/", async (req, res) => {
   const { error } = validateCustomer(req.body);
   if (error) {
@@ -35,12 +44,50 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  const { error } = validateCustomer(req.body);
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+  try {
+    const customer = await persistence.updateCustomer({
+      _id: req.params.id,
+      name: req.body.name,
+      phone: req.body.phone,
+      isGold: req.body.isGold
+    });
+    res.send({
+      _id: genre._id,
+      name: genre.name,
+      phone: customer.phone,
+      isGold: customer.isGold
+    });
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const customer = await persistence.deleteCustomer(req.params.id);
+    res.send({
+      _id: customer._id,
+      name: customer.name,
+      phone: customer.phone,
+      isGold: customer.isGold
+    });
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
 function validateCustomer(customer) {
   const schema = {
     name: Joi.string()
       .min(3)
       .required(),
-    phone: Joi.string().min(5)
+    phone: Joi.string().min(5),
+    isGold: Joi.boolean()
   };
   return Joi.validate(customer, schema);
 }
