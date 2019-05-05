@@ -40,5 +40,7 @@ module.exports = {
 
   deleteGenre: async id => {
     return await Genre.deleteOne({ _id: id });
-  }
+  },
+
+  genreSchema
 };
