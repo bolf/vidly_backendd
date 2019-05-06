@@ -43,5 +43,6 @@ module.exports = {
 
   deleteCustomer: async id => {
     return await Customer.deleteOne({ _id: id });
-  }
+  },
+  Customer
 };

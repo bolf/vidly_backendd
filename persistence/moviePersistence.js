@@ -3,11 +3,13 @@ const mongoose = require("mongoose");
 const movieSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true
+    required: true,
+    maxlength: 255,
+    trim: true
   },
   genre: new mongoose.Schema({ name: { type: String, required: true } }),
-  numberInStock: Number,
-  dailyRentalRate: Number
+  numberInStock: { type: Number, max: 255, min: 0 },
+  dailyRentalRate: { type: Number, max: 255, min: 0 }
 });
 
 const Movie = mongoose.model("Movie", movieSchema);
@@ -43,5 +45,7 @@ module.exports = {
 
   deleteMovie: async id => {
     return await Movie.deleteOne({ _id: id });
-  }
+  },
+
+  Movie
 };
