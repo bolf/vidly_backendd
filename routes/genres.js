@@ -2,7 +2,7 @@ const debug = require("debug")("debugger");
 const express = require("express");
 const router = express.Router();
 const Joi = require("joi");
-const persistence = require("../persistence/genrePersistence");
+const persistence = require("../persistence/genresPersistence");
 
 router.get("/", async (req, res) => {
   try {

@@ -3,8 +3,8 @@ const express = require("express");
 const router = express.Router();
 const Joi = require("joi");
 const persistence = require("../persistence/rentalsPersistence");
-const { Customer } = require("../persistence/customerPersistence");
-const { Movie } = require("../persistence/moviePersistence");
+const { Customer } = require("../persistence/customersPersistence");
+const { Movie } = require("../persistence/moviesPersistence");
 const { Rental } = require("../persistence/rentalsPersistence");
 
 router.get("/", async (req, res) => {
@@ -51,8 +51,8 @@ router.post("/", async (req, res) => {
 
 function validateRental(rental) {
   const schema = {
-    customerId: Joi.string().required(),
-    movieId: Joi.string().required()
+    customerId: Joi.objectId().required(),
+    movieId: Joi.objectId().required()
   };
   return Joi.validate(rental, schema);
 }
