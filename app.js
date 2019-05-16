@@ -11,6 +11,13 @@ const auth = require("./routes/auth");
 
 const mongoose = require("mongoose");
 const debug = require("debug")("debugger");
+
+const config = require("config");
+if (!config.get("jwtPrivateKey")) {
+  console.error("ERROR: jwtPrivateKey is not defined");
+  process.exit(1);
+}
+
 /*
 If you define indexes in your Mongoose schemas, you'll see the below deprecation warning.
 DeprecationWarning: collection.ensureIndex is deprecated. Use createIndexes

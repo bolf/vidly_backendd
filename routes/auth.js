@@ -6,6 +6,7 @@ const debug = require("debug")("debugger");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const config = require("config");
 
 router.post("/", async (req, res) => {
   try {
@@ -22,7 +23,7 @@ router.post("/", async (req, res) => {
       return res.status(400).send("invalid email or password");
     }
 
-    const token = jwt.sign({ _id: user._id }, "privateKey");
+    const token = jwt.sign({ _id: user._id }, config.get("jwtPrivateKey"));
     res.send(token);
   } catch (e) {
     res.status(400).send(e);
