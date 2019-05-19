@@ -12,6 +12,8 @@ const auth = require("./routes/auth");
 const mongoose = require("mongoose");
 const debug = require("debug")("debugger");
 
+const error = require("./middleware/error");
+
 const config = require("config");
 if (!config.get("jwtPrivateKey")) {
   console.error("ERROR: jwtPrivateKey is not defined");
@@ -51,6 +53,8 @@ app.use("/api/movies", movies);
 app.use("/api/rentals", rentals);
 app.use("/api/users", users);
 app.use("/api/auth", auth);
+
+app.use(error);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

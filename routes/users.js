@@ -5,23 +5,28 @@ const persistence = require("../persistence/usersPersistence");
 const debug = require("debug")("debugger");
 const _ = require("lodash");
 const auth = require("../middleware/auth");
+const asyncMiddleware = require("../middleware/async");
 
-router.get("/me", auth, async (req, res) => {
-  const user = await persistence.getUserById(req.user._id);
-  res.send(_.pick(user, ["_id", "name", "email"]));
-});
+router.get(
+  "/me",
+  auth,
+  asyncMiddleware(async (req, res) => {
+    const user = await persistence.getUserById(req.user._id);
+    res.send(_.pick(user, ["_id", "name", "email"]));
+  })
+);
 
-router.get("/", async (req, res) => {
-  try {
+router.get(
+  "/",
+  asyncMiddleware(async (req, res) => {
     const users = await persistence.getUsers();
     res.send(users);
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
+  })
+);
 
-router.post("/", async (req, res) => {
-  try {
+router.post(
+  "/",
+  asyncMiddleware(async (req, res) => {
     const { error } = validateUser(req.body);
     if (error) {
       return res.status(400).send(error.details[0].message);
@@ -31,10 +36,8 @@ router.post("/", async (req, res) => {
     res
       .header("x-auth-token", token)
       .send(_.pick(user, ["_id", "name", "email"]));
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
+  })
+);
 
 function validateUser(user) {
   const schema = {

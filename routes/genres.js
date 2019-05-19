@@ -5,59 +5,57 @@ const Joi = require("joi");
 const persistence = require("../persistence/genresPersistence");
 const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
+const asyncMiddleware = require("../middleware/async");
 
-router.get("/", async (req, res) => {
-  try {
+router.get(
+  "/",
+  asyncMiddleware(async (req, res, next) => {
     const genres = await persistence.getGenres();
     res.send(genres);
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
+  })
+);
 
-router.get("/:id", async (req, res) => {
-  try {
+router.get(
+  "/:id",
+  asyncMiddleware(async (req, res) => {
     const genre = await persistence.getGenreById(req.params.id);
     res.send(genre);
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
+  })
+);
 
-router.post("/", auth, async (req, res) => {
-  const { error } = validateGenre(req.body);
-  if (error) {
-    return res.status(400).send(error.details[0].message);
-  }
-  try {
+router.post(
+  "/",
+  auth,
+  asyncMiddleware(async (req, res) => {
+    const { error } = validateGenre(req.body);
+    if (error) {
+      return res.status(400).send(error.details[0].message);
+    }
     const genre = await persistence.insertGenre(req.body.name);
     res.send({ _id: genre._id, name: genre.name });
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
+  })
+);
 
-router.put("/:id", async (req, res) => {
-  const { error } = validateGenre(req.body);
-  if (error) {
-    return res.status(400).send(error.details[0].message);
-  }
-  try {
+router.put(
+  "/:id",
+  asyncMiddleware(async (req, res) => {
+    const { error } = validateGenre(req.body);
+    if (error) {
+      return res.status(400).send(error.details[0].message);
+    }
     const genre = await persistence.updateGenre(req.params.id, req.body.name);
     res.send({ _id: genre._id, name: genre.name });
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
+  })
+);
 
-router.delete("/:id", [auth, admin], async (req, res) => {
-  try {
+router.delete(
+  "/:id",
+  [auth, admin],
+  asyncMiddleware(async (req, res) => {
     const genre = await persistence.deleteGenre(req.params.id);
     res.send({ _id: genre._id, name: genre.name });
-  } catch (e) {
-    res.status(400).send(e);
-  }
-});
+  })
+);
 
 function validateGenre(genre) {
   const schema = {
