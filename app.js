@@ -1,4 +1,4 @@
-const Joi = require("joi");
+const Joi = require("joi"); //validator
 Joi.objectId = require("joi-objectid")(Joi);
 
 const express = require("express");
@@ -13,6 +13,18 @@ const mongoose = require("mongoose");
 const debug = require("debug")("debugger");
 
 const error = require("./middleware/error");
+
+const winston = require("winston"); //logger
+
+winston.add(new winston.transports.File({ filename: "logfile.log" }));
+
+winston.handleExceptions(
+  new winston.transports.File({ filename: "uncaughtExceptions.log" })
+);
+
+process.on("unhandledRejection", e => {
+  throw e;
+});
 
 const config = require("config");
 if (!config.get("jwtPrivateKey")) {
@@ -37,6 +49,7 @@ mongoose
     useNewUrlParser: true
   })
   .then(() => {
+    winston.warn("connected to db");
     debug("connected to db");
   })
   .catch(err => {
