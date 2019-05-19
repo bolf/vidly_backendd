@@ -21,7 +21,10 @@ router.post("/", async (req, res) => {
       return res.status(400).send(error.details[0].message);
     }
     const user = await persistence.insertUser(req.body);
-    res.send(_.pick(user, ["_id", "name", "email"]));
+    const token = user.generateAuthToken();
+    res
+      .header("x-auth-token", token)
+      .send(_.pick(user, ["_id", "name", "email"]));
   } catch (e) {
     res.status(400).send(e);
   }
