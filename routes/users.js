@@ -4,6 +4,12 @@ const Joi = require("joi");
 const persistence = require("../persistence/usersPersistence");
 const debug = require("debug")("debugger");
 const _ = require("lodash");
+const auth = require("../middleware/auth");
+
+router.get("/me", auth, async (req, res) => {
+  const user = await persistence.getUserById(req.user._id);
+  res.send(_.pick(user, ["_id", "name", "email"]));
+});
 
 router.get("/", async (req, res) => {
   try {

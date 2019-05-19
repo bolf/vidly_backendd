@@ -6,6 +6,7 @@ const persistence = require("../persistence/rentalsPersistence");
 const { Customer } = require("../persistence/customersPersistence");
 const { Movie } = require("../persistence/moviesPersistence");
 const { Rental } = require("../persistence/rentalsPersistence");
+const auth = require("../middleware/auth");
 
 router.get("/", async (req, res) => {
   try {
@@ -16,7 +17,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { error } = validateRental(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 

@@ -22,11 +22,15 @@ const userSchemema = new mongoose.Schema({
     required: true,
     min: 5,
     max: 1024
-  }
+  },
+  isAdmin: Boolean
 });
 
 userSchemema.methods.generateAuthToken = function() {
-  return jwt.sign({ _id: this._id }, config.get("jwtPrivateKey"));
+  return jwt.sign(
+    { _id: this._id, isAdmin: this.isAdmin },
+    config.get("jwtPrivateKey")
+  );
 };
 
 const User = mongoose.model("User", userSchemema);
@@ -46,6 +50,11 @@ module.exports = {
 
   getUserByEmail: async email => {
     const user = await User.findOne({ email: email });
+    return user;
+  },
+
+  getUserById: async id => {
+    const user = await User.findById({ _id: id });
     return user;
   },
 

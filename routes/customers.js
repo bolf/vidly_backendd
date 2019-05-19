@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const Joi = require("joi");
 const persistence = require("../persistence/customersPersistence");
+const auth = require("../middleware/auth");
 
 router.get("/", async (reg, res) => {
   try {
@@ -13,7 +14,7 @@ router.get("/", async (reg, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
   try {
     const genre = await persistence.getCustomerById(req.params.id);
     res.send(genre);
